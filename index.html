@@ -12,55 +12,17 @@
     border-radius: 4px;
 }
 </style>
-<script src="https://fungo.kcg.edu/madoi-20210702/js/madoi.js"></script>
 </head>
 <body>
 <form id="chatForm">
     <div>
-        <input id="nameInputText" size="8" type="text" value="匿名">
-        <input id="chatInputText" size="20" type="text" placeholder="送信するメッセージ">
+        <input id="nameInput" size="8" type="text" value="匿名">
+        <input id="messageInput" size="20" type="text" placeholder="送信するメッセージ">
         <button type="submit">送信</button>
     </div>
 </form>
 <div id="chatLogDiv"></div>
-<script>
-class Chat{
-    constructor(sendFormId, nameInputId, messageInputId, logDivId){
-        this.nameInput = document.querySelector(nameInputId);
-        this.messageInput = document.querySelector(messageInputId);
-        this.logDiv = document.querySelector(logDivId);
-        const sendForm = document.querySelector(sendFormId);
-        sendForm.addEventListener("submit", event => {
-            event.preventDefault();
-            const name = this.nameInput.value.trim();
-            const text = this.messageInput.value.trim();
-            if(text.length == 0) return false;
-            this.messageInput.value = "";
-            this.send(name, text);
-            return false;
-        });
-    }
-    send(name, message){
-        const textSpan = document.createElement("span");
-        textSpan.append(name + ": " + message);
-        this.logDiv.append(textSpan);
-        this.logDiv.append(document.createElement("br"));
-        this.logDiv.scrollTop = this.logDiv.scrollHeight;
-    }
-}
-
-window.onload = ()=>{
-    const roomId = "chat-ldfnglkkeg";
-    const mm = new madoi.Madoi(`rooms/${roomId}`);
-    const chat = new Chat(
-        "#chatForm", "#nameInputText",
-        "#chatInputText", "#chatLogDiv");
-    mm.shareObject(chat, [chat.send], {
-        "methods": {
-            "send": {keep: "log", maxLog: "1000"}
-        }
-    });
-};
-</script>
+<script src="https://fungo.kcg.edu/madoi-20210702/js/madoi.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
