@@ -3,11 +3,9 @@ window.addEventListener("load", ()=>{
     const chat = new Chat(
         "#chatForm", "#nameInput",
         "#messageInput", "#chatLogDiv");
-    m.shareObject(chat, [chat.send], {
-        "methods": {
-            "send": {keep: "log", maxLog: "1000"}
-        }
-    });
+    m.register(chat, [
+        {method: chat.send, config: {maxLog: "1000"}}
+    ]);
 });
 
 class Chat{
