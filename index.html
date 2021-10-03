@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<style>
+#chatLogDiv {
+    overflow: scroll;
+    resize: vertical;
+    height: 400px;
+    border: solid 1px;
+    padding: 4;
+    border-radius: 4px;
+}
+</style>
+<script src="https://fungo.kcg.edu/madoi-20210702/js/madoi.js"></script>
+</head>
+<body>
+<form id="chatForm">
+    <div>
+        <input id="nameInputText" size="8" type="text" value="匿名">
+        <input id="chatInputText" size="20" type="text" placeholder="送信するメッセージ">
+        <button type="submit">送信</button>
+    </div>
+</form>
+<div id="chatLogDiv"></div>
+<script>
+class Chat{
+    constructor(sendForm, nameInputText, messageInputText, logDiv){
+        this.nameInputText = document.querySelector(nameInputText);
+        this.messageInputText = document.querySelector(messageInputText);
+        this.logDiv = document.querySelector(logDiv);
+        document.querySelector(sendForm).addEventListener("submit", event => {
+            event.preventDefault();
+            const name = this.nameInputText.value.trim();
+            const text = this.messageInputText.value.trim();
+            if(text.length == 0) return false;
+            this.messageInputText.value = "";
+            this.send(name, text);
+            return false;
+        });
+    }
+    send(name, message){
+        const textSpan = document.createElement("span");
+        textSpan.append(name + ": " + message);
+        this.logDiv.append(textSpan);
+        this.logDiv.append(document.createElement("br"));
+        this.logDiv.scrollTop = this.logDiv.scrollHeight;
+    }
+}
+
+window.onload = ()=>{
+    const roomId = "chat-ldfnglkkeg";
+    const mm = new madoi.Madoi(`rooms/${roomId}`);
+    const chat = new Chat(
+        "#chatForm", "#nameInputText",
+        "#chatInputText", "#chatLogDiv");
+    mm.shareObject(chat, [chat.send], {
+        "methods": {
+            "send": {keep: "log", maxLog: "1000"}
+        }
+    });
+};
+</script>
+</body>
+</html>
