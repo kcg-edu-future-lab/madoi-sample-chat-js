@@ -25,16 +25,17 @@
 <div id="chatLogDiv"></div>
 <script>
 class Chat{
-    constructor(sendForm, nameInputText, messageInputText, logDiv){
-        this.nameInputText = document.querySelector(nameInputText);
-        this.messageInputText = document.querySelector(messageInputText);
-        this.logDiv = document.querySelector(logDiv);
-        document.querySelector(sendForm).addEventListener("submit", event => {
+    constructor(sendFormId, nameInputId, messageInputId, logDivId){
+        this.nameInput = document.querySelector(nameInputId);
+        this.messageInput = document.querySelector(messageInputId);
+        this.logDiv = document.querySelector(logDivId);
+        const sendForm = document.querySelector(sendFormId);
+        sendForm.addEventListener("submit", event => {
             event.preventDefault();
-            const name = this.nameInputText.value.trim();
-            const text = this.messageInputText.value.trim();
+            const name = this.nameInput.value.trim();
+            const text = this.messageInput.value.trim();
             if(text.length == 0) return false;
-            this.messageInputText.value = "";
+            this.messageInput.value = "";
             this.send(name, text);
             return false;
         });
