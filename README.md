@@ -32,13 +32,13 @@ class Chat{
 }
 ```
 
-このメソッドでは，名前(name)とメッセージ(message)を受け取り，チャットログに"名前: メッセージ"という文字列を追加しています。もしこの処理が他のブラウザでも実行されば，誰かがチャットログを追加したときに他のブラウザでも同じように追加されることになります。[index.js](https://github.com/kcg-edu-future-lab/madoi-sample-chat-js/blob/main/index.js)の以下の部分で，その指定を行っています。
+このメソッドでは，名前(name)とメッセージ(message)を受け取り，チャットログに"名前: メッセージ"という文字列を追加しています。もしこの処理が他のブラウザでも実行されれば，誰かがチャットログを追加したときに他のブラウザでも同じように追加されることになります。[index.js](https://github.com/kcg-edu-future-lab/madoi-sample-chat-js/blob/main/index.js)の以下の部分で，その指定を行っています。
 
 ```js
 window.addEventListener("load", ()=>{
     // 省略
     m.register(chat, [
-        { method: chat.send, share: {maxLog: 1000}}
+        {method: chat.send, share: {maxLog: 1000}}
     ]);
 });
 ```
