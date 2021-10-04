@@ -4,7 +4,7 @@ window.addEventListener("load", ()=>{
         "#chatForm", "#nameInput",
         "#messageInput", "#chatLogDiv");
     m.register(chat, [
-        {method: chat.send, config: {maxLog: "1000"}}
+        {method: chat.send, share: {maxLog: 1000}}
     ]);
 });
 
