@@ -38,7 +38,7 @@ class Chat{
 window.addEventListener("load", ()=>{
     // 省略
     m.register(chat, [
-        { method: chat.send, config: {maxLog: "1000"}}
+        { method: chat.send, share: {maxLog: 1000}}
     ]);
 });
 ```
