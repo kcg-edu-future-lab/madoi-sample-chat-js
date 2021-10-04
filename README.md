@@ -16,9 +16,9 @@ python3 -m http.server
 
 ## コードの説明
 
-madoiを使ったチャットのサンプルです。madoiは指定されたメソッドの実行を，同じセッションに参加しているアプリ間で共有するサービスです。このサンプル(index.js)では，まずチャットログを管理するクラスChatを作り，メソッドsendを以下のように記述しています。
+madoiを使ったチャットのサンプルです。madoiは指定されたメソッドの実行を，同じセッションに参加しているアプリ間で共有するサービスです。このチャットサンプルのコード([index.js](https://github.com/kcg-edu-future-lab/madoi-sample-chat-js/blob/main/index.js))では，まずチャットログを管理するクラスChatを作り，メソッドsendを以下のように記述しています。
 
-```
+```js
 class Chat{
     // 省略
 
@@ -32,9 +32,9 @@ class Chat{
 }
 ```
 
-このメソッドでは，名前(name)とメッセージ(message)を受け取り，チャットログに"名前: メッセージ"という文字列を追加しています。もしこの処理が他のブラウザでも実行されば，誰かがチャットログを追加したときに他のブラウザでも同じように追加されることになります。index.jsの以下の部分で，その指定を行っています。
+このメソッドでは，名前(name)とメッセージ(message)を受け取り，チャットログに"名前: メッセージ"という文字列を追加しています。もしこの処理が他のブラウザでも実行されば，誰かがチャットログを追加したときに他のブラウザでも同じように追加されることになります。[index.js](https://github.com/kcg-edu-future-lab/madoi-sample-chat-js/blob/main/index.js)の以下の部分で，その指定を行っています。
 
-```
+```js
 window.addEventListener("load", ()=>{
     // 省略
     m.register(chat, [
