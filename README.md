@@ -1,46 +1,79 @@
 # madoi-sample-chat-js
 
-未来環境ラボで開発しているオブジェクト共有サービス madoi を使ってチャットを作成するサンプルです。
+未来環境ラボで開発しているオブジェクト共有サービス Madoi を使ってチャットを作成するサンプルです。Madoiを利用すると，簡単なコードでチャットやホワイトボードなどのネットワークアプリケーションを開発できます。
 
-まずはこのリポジトリをcloneしてください。
+サンプルを実行するには，まずこのリポジトリをcloneしてください。
 ```
 git clone https://github.com/kcg-edu-future-lab/madoi-sample-chat-js
 ```
 
-次にindex.htmlがあるディレクトリでHTTPサーバを起動し，ブラウザで表示してください。例えばpython3がインストールされていれば，以下のコマンドでサーバを起動できます。Rubyや他の言語でもHTTPサーバを起動できるものはありますので，環境に応じた方法で起動してください。
-```
-python3 -m http.server
-```
+次にindex.htmlをブラウザで開いてください。表示された画面のテキストフィールドにメッセージを入力してEnterを押すか送信ボタンを押すと，チャットメッセージが送信されます。
 
-表示された画面のテキストフィールドにメッセージを入力してEnterを押すか送信ボタンを押すと，チャットメッセージが送信されます。
+![動作イメージ](sample.gif)
 
 ## コードの説明
 
-madoiを使ったチャットのサンプルです。madoiは指定されたメソッドの実行を，同じセッションに参加しているアプリ間で共有するサービスです。このチャットサンプルのコード([index.js](https://github.com/kcg-edu-future-lab/madoi-sample-chat-js/blob/main/index.js))では，まずチャットログを管理するクラスChatを作り，メソッドsendを以下のように記述しています。
+このサンプル([ソースコード](https://github.com/kcg-edu-future-lab/madoi-sample-chat-js/blob/main/index.html))では，まずチャットの入力フォームとログを表示するdivタグを定義しています。該当部分を引用します。
 
-```js
-class Chat{
-    // 省略
-
-    send(name, message){
-        const textSpan = document.createElement("span");
-        textSpan.append(name + ": " + message);
-        this.logDiv.append(textSpan);
-        this.logDiv.append(document.createElement("br"));
-        this.logDiv.scrollTop = this.logDiv.scrollHeight;
-    }
-}
+```html
+<form id="chatForm">
+    <input data-id="name" size="8" type="text" value="匿名">
+    <input data-id="message" size="20" type="text" placeholder="送信するメッセージ">
+    <button type="submit">送信</button>
+</form>
+<div id="chatLogDiv">
+    <template data-id="logTemplate">
+        <span data-id="name"></span>: <span data-id="message"></span><br/>
+    </template>
+</div>
 ```
 
-このメソッドでは，名前(name)とメッセージ(message)を受け取り，チャットログに"名前: メッセージ"という文字列を追加しています。もしこの処理が他のブラウザでも実行されれば，誰かがチャットログを追加したときに他のブラウザでも同じように追加されることになります。[index.js](https://github.com/kcg-edu-future-lab/madoi-sample-chat-js/blob/main/index.js)の以下の部分で，その指定を行っています。
+フォームでは，名前とメッセージを入力するinputと，送信ボタンが定義されています。ログ部分は，ログとして追加するHTMLのテンプレートが定義されています。メッセージが追加されるたびに，このテンプレートを複製してログ用のdivに追加します。
+
+以下に，JavaScript部分の冒頭を引用します。
 
 ```js
 window.addEventListener("load", ()=>{
-    // 省略
+    const m = new madoi.Madoi("chat-ldfngslkkeg");
+    const chat = new Chat("chatForm", "chatLogDiv");
     m.register(chat, [
-        {method: chat.send, share: {maxLog: 1000}}
+        {method: chat.addLog, share: {maxLog: 1000}}
     ]);
 });
 ```
 
-上記のコードが実行されると，chat.sendの内容が置き換えられ，メソッドが実行されたら一旦それをサービスに送信するようになります。サービスは参加している全てのブラウザにそれを送信し，ブラウザ側で受信されたら本来のchat.sendの処理が実行されます。これにより，チャットログの共有が実現されます。
+ページがロードされると，Madoiクラスをnewしています。引数はルームのIDです。同じルームIDを指定しているクライアント間で，メッセージ配信が行われます。次にChatクラスをnewして，addLogメソッドをMadoiに登録しています。メソッドをMadoiに登録すると，そのメソッドの実行が，同じルームに参加しているクライアント間で共有されます。
+
+具体的には，addLogメソッドが呼び出されると，まず呼び出されたという通知がMadoiサーバに送信されます(メソッドの中身はまだ実行されません)。Madoiサーバはルームに参加している前クライアントにその通知を送ります。クライアントが通知を受け取ると，実際にメソッドが実行されます。この仕組みにより，全てのChatアプリケーションに名前とメッセージが送信され，ログに追加されます。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant c1 as Client1
+    participant s as Madoi Server
+    participant c2 as Client2
+    c1->>c1: "chat.addLog"呼び出し
+    c1->>s: "chat.addLog"が呼び出された
+    s->>c1: "chat.addLog"が呼び出された
+    s->>c2: "chat.addLog"が呼び出された
+    c1->>c1: "chat.addLog"実行 
+    c2->>c2: "chat.addLog"実行 
+```
+
+最後に，ChatクラスのaddLogメソッドを以下に引用します。
+
+```js
+class Chat{
+    // 省略
+    addLog(name, message){
+        const log = this.logTemplate.content.cloneNode(true);
+        log.querySelector("[data-id='name']").textContent = name;
+        log.querySelector("[data-id='message']").textContent = message;
+        this.chatLogDiv.append(log);
+        this.chatLogDiv.scrollTop = this.chatLogDiv.scrollHeight;
+    }
+}
+```
+
+このメソッドでは，名前(name)とメッセージ(message)を受け取り，ログのテンプレートを複製してnameとmessageを設定し，チャットログに追加しています。このメソッドが全クライアントで実行されることで，ログ部分の状態が共有されます。
+

@@ -15,14 +15,50 @@
 </head>
 <body>
 <form id="chatForm">
-    <div>
-        <input id="nameInput" size="8" type="text" value="匿名">
-        <input id="messageInput" size="20" type="text" placeholder="送信するメッセージ">
-        <button type="submit">送信</button>
-    </div>
+    <input data-id="name" size="8" type="text" value="匿名">
+    <input data-id="message" size="20" type="text" placeholder="送信するメッセージ">
+    <button type="submit">送信</button>
 </form>
-<div id="chatLogDiv"></div>
-<script src="https://fungo.kcg.edu/madoi-20211003/js/madoi.js"></script>
-<script src="index.js"></script>
+<div id="chatLogDiv">
+    <template data-id="logTemplate">
+        <span data-id="name"></span>: <span data-id="message"></span><br/>
+    </template>
+</div>
+<script src="https://fungo.kcg.edu/madoi-20220920/js/madoi.js"></script>
+<script>
+window.addEventListener("load", ()=>{
+    const m = new madoi.Madoi("chat-ldfngslkkeg");
+    const chat = new Chat("chatForm", "chatLogDiv");
+    m.register(chat, [
+        {method: chat.addLog, share: {maxLog: 1000}}
+    ]);
+});
+
+class Chat{
+    constructor(chatFormId, chatLogDivId){
+        const chatForm = document.getElementById(chatFormId);
+        this.nameInput = chatForm.querySelector("[data-id='name']");
+        this.messageInput = chatForm.querySelector("[data-id='message']");
+        this.chatLogDiv = document.getElementById(chatLogDivId);
+        this.logTemplate = this.chatLogDiv.querySelector("[data-id='logTemplate']");
+        chatForm.addEventListener("submit", event => {
+            event.preventDefault();
+            const name = this.nameInput.value.trim();
+            const text = this.messageInput.value.trim();
+            if(text.length > 0){
+                this.messageInput.value = "";
+                this.addLog(name, text);
+            }
+        });
+    }
+    addLog(name, message){
+        const log = this.logTemplate.content.cloneNode(true);
+        log.querySelector("[data-id='name']").textContent = name;
+        log.querySelector("[data-id='message']").textContent = message;
+        this.chatLogDiv.append(log);
+        this.chatLogDiv.scrollTop = this.chatLogDiv.scrollHeight;
+    }
+}
+</script>
 </body>
 </html>
