@@ -37,19 +37,19 @@ window.addEventListener("load", ()=>{
 class Chat{
     constructor(chatFormId, chatLogDivId){
         const chatForm = document.getElementById(chatFormId);
-        this.nameInput = chatForm.querySelector("[data-id='name']");
-        this.messageInput = chatForm.querySelector("[data-id='message']");
-        this.chatLogDiv = document.getElementById(chatLogDivId);
-        this.logTemplate = this.chatLogDiv.querySelector("[data-id='logTemplate']");
+        const nameInput = chatForm.querySelector("[data-id='name']");
+        const messageInput = chatForm.querySelector("[data-id='message']");
         chatForm.addEventListener("submit", event => {
             event.preventDefault();
-            const name = this.nameInput.value.trim();
-            const text = this.messageInput.value.trim();
+            const name = nameInput.value.trim();
+            const text = messageInput.value.trim();
             if(text.length > 0){
-                this.messageInput.value = "";
+                messageInput.value = "";
                 this.addLog(name, text);
             }
         });
+        this.chatLogDiv = document.getElementById(chatLogDivId);
+        this.logTemplate = this.chatLogDiv.querySelector("[data-id='logTemplate']");
     }
     addLog(name, message){
         const log = this.logTemplate.content.cloneNode(true);
